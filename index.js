@@ -35,6 +35,12 @@ async function run(){
             const services= await cursor.toArray();
             res.send(services)
         })
+        app.get('/allServices',async(req,res)=>{
+            let query= {};
+            const cursor=ServiceCollection.find(query)
+            const services= await cursor.toArray();
+            res.send(services)
+        })
 
     }
     finally{
