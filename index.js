@@ -71,7 +71,12 @@ async function run(){
 
         // get all reviews .
         app.get('/reviews',async(req,res)=>{
-            let query= {};
+            let query={}
+           if(req.query.serviceId){
+            query={
+                serviceId: req.query.serviceId
+            }
+           }
             const cursor=ReviwsCollection.find(query)
             const reviews= await cursor.toArray();
             res.send(reviews)
