@@ -19,8 +19,14 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
 
     try{
-        // add servicess
+        // collection
         const ServiceCollection=client.db('servicesDb').collection('services')
+
+        const ReviwsCollection=client.db('servicesDb').collection('Reviews')
+
+
+
+        // create servises by add services
         app.post('/services', async(req, res)=>{
            
             const services =req.body;
@@ -29,18 +35,48 @@ async function run(){
             
         })
 
+
+        //servicess get method for home page
         app.get('/services',async(req,res)=>{
             let query= {};
             const cursor=ServiceCollection.find(query).limit(3)
             const services= await cursor.toArray();
             res.send(services)
-        })
+        }) 
+
+        // all services fr see all button
         app.get('/allServices',async(req,res)=>{
             let query= {};
             const cursor=ServiceCollection.find(query)
             const services= await cursor.toArray();
             res.send(services)
         })
+
+        // specificServiceDetails
+        app.get('/service/:id',async(req, res)=>{
+            const id = req.params.id;
+            const query ={_id: ObjectId(id)}
+            const result= await ServiceCollection.findOne(query)
+            res.send(result)
+        })
+
+        // add reviews
+        app.post('/reviews', async(req, res)=>{
+           
+            const reviews =req.body;
+            const result= await ReviwsCollection.insertOne(reviews);
+            res.send(result);
+            
+        })
+
+        // get all reviews .
+        app.get('/reviews',async(req,res)=>{
+            let query= {};
+            const cursor=ReviwsCollection.find(query)
+            const reviews= await cursor.toArray();
+            res.send(reviews)
+        })
+
 
     }
     finally{
