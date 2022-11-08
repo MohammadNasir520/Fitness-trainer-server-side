@@ -84,20 +84,15 @@ async function run() {
       res.send(reviews);
     });
 
-    // // query all reviews by service user email .
-    // app.get("/reviews", async (req, res) => {
-    //   console.log(req.query.email);
-    //   let query = {};
-    //   if (req.query.email) {
-    //     query = {
-    //       email: req.query.email,
-    //     };
-       
-    //   }
-    //   const cursor = ReviwsCollection.find(query);
-    //   const reviews = await cursor.toArray();
-    //   res.send(reviews);
-    // });
+
+    app.delete('/reviews/:id',async(req, res)=>{
+        const id = req.params.id;
+        const query ={_id: ObjectId(id)}
+        const result= await ReviwsCollection.deleteOne(query)
+        res.send(result)
+    })
+
+   
   } finally {
   }
 }
