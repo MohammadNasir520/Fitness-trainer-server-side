@@ -38,6 +38,25 @@ const client = new MongoClient(uri, {
 // }
 
 
+function verifyJWT(req,res,next){
+// console.log(req.headers.authorization)
+const authHeader=req.headers.authorization;
+if(!authHeader){
+  return res.status(401).send({message: 'unauthorized access'})
+}
+
+const token=authHeader.split(' ')[1];
+jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,function(err,decoded){
+  if(err){
+    return res.status(401).send({message:'unauthorized access'})
+  }
+  req.decoded=decoded;
+  next()
+})
+
+}
+
+
 
 async function run() {
   try {
@@ -97,10 +116,16 @@ async function run() {
 
 
     // query all reviews by service id .
-    app.get("/reviews", async (req, res) => {
-      // console.log(req.query);
+    app.get("/reviews",verifyJWT, async (req, res) => {
+     
+        const decoded=req.decoded;
+        console.log('inside reviews api',decoded)
+     
+        if(decoded.email!==email){
+          res.status(403).send({message:'unauthorized access'})
+        }
+
       let query = {};
-        
       if (req.query.email) {
         query = {
           email: req.query.email,
