@@ -121,7 +121,7 @@ async function run() {
         const decoded=req.decoded;
         console.log('inside reviews api',decoded)
      
-        if(decoded.email!==email){
+        if(decoded.email!==req.query.email){
           res.status(403).send({message:'unauthorized access'})
         }
 
