@@ -11,7 +11,8 @@ app.use(express.json());
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.c5dej4c.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+// console.log(uri);
+
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -19,22 +20,22 @@ const client = new MongoClient(uri, {
 });
 
 
-function verifyJWT(req, res,next){
-    console.log(req.headers.authorization)
-    const authHeader=req.headers.authorization;
-    if(!authHeader){
-      return  res.send({message: 'unauthorized access'})
-    }
-    const token=authHeader.split(' ')[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECREAT, function(err,decoded){
-        if(err){
-          return  res.send({message: 'unauthorized access'})
-        }
-        req.decoded=decoded;
-        next();
-    })
+// function verifyJWT(req, res,next){
+//     console.log(req.headers.authorization)
+//     const authHeader=req.headers.authorization;
+//     if(!authHeader){
+//       return  res.send({message: 'unauthorized access'})
+//     }
+//     const token=authHeader.split(' ')[1];
+//     jwt.verify(token, process.env.ACCESS_TOKEN_SECREAT, function(err,decoded){
+//         if(err){
+//           return  res.send({message: 'unauthorized access'})
+//         }
+//         req.decoded=decoded;
+//         next();
+//     })
 
-}
+// }
 
 
 
@@ -44,6 +45,14 @@ async function run() {
     const ServiceCollection = client.db("servicesDb").collection("services");
 
     const ReviwsCollection = client.db("servicesDb").collection("Reviews");
+
+    // jwt Token
+    app.post('/jwt',(req,res)=>{
+      const user=req.body;
+      const token=jwt.sign(user, process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'});
+      res.send({token})
+    })
+
 
     // create servises by add services
     app.post("/services", async (req, res) => {
@@ -89,7 +98,7 @@ async function run() {
 
     // query all reviews by service id .
     app.get("/reviews", async (req, res) => {
-      console.log(req.query);
+      // console.log(req.query);
       let query = {};
         
       if (req.query.email) {
@@ -133,7 +142,7 @@ async function run() {
 //PUT method for dynamic revews
     app.put('/reviews/:id',async(req, res)=>{
         const id = req.params.id;
-        console.log(id)
+        // console.log(id)
         const review=req.body.review;
         const query ={_id: ObjectId(id)}
         const updateDoc={
