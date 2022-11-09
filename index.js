@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const jwt = require('jsonwebtoken');
+const jwt =require ('jsonwebtoken');
 const port = process.env.PORT || 5000;
 require("dotenv").config();
 
@@ -90,13 +90,8 @@ async function run() {
     // query all reviews by service id .
     app.get("/reviews", async (req, res) => {
       console.log(req.query);
-    //   console.log(req.headers.authorization)
-    // const decoded=req.decoded;
-    // console.log('decoded',decoded)
       let query = {};
-        // if(decoded.email !==req.query.email){
-        //     res.send ('anauthorized access')
-        // }
+        
       if (req.query.email) {
         query = {
           email: req.query.email,
@@ -135,7 +130,7 @@ async function run() {
         const result= await ReviwsCollection.findOne(query)
         res.send(result)
     })
-
+//PUT method for dynamic revews
     app.put('/reviews/:id',async(req, res)=>{
         const id = req.params.id;
         console.log(id)
@@ -150,15 +145,8 @@ async function run() {
         res.send(result)
     });
 
-    // jwt method
-    app.post('/jwt', (req,res)=>{
-        const user=req.body;
-        console.log(user)
-         //making token
-         const token=jwt.sign(user,process.env.ACCESS_TOKEN_SECREAT,{expiresIn:'10h'})
-        
-         res.send({token})
-    })
+    
+   
 
    
   } finally {
