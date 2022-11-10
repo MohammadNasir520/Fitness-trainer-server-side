@@ -41,14 +41,15 @@ const client = new MongoClient(uri, {
 function verifyJWT(req,res,next){
 // console.log(req.headers.authorization)
 const authHeader=req.headers.authorization;
+console.log(authHeader)
 if(!authHeader){
-  return res.status(401).send({message: 'unauthorized access'})
+  return res.status(401).send({message: 'unauthorized access 1'})
 }
 
 const token=authHeader.split(' ')[1];
 jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,function(err,decoded){
   if(err){
-    return res.status(401).send({message:'unauthorized access'})
+    return res.status(401).send({message:'unauthorized access 2'})
   }
   req.decoded=decoded;
   next()
@@ -122,7 +123,7 @@ async function run() {
         console.log('inside reviews api',decoded)
      
         if(decoded.email!==req.query.email){
-          res.status(403).send({message:'unauthorized access'})
+          res.status(403).send({message:'unauthorized access 3'})
         }
 
       let query = {};
@@ -131,6 +132,30 @@ async function run() {
           email: req.query.email,
         };
       }
+     
+
+      const cursor = ReviwsCollection.find(query).sort({$natural:-1});
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
+
+    app.get("/serviceReviews", async (req, res) => {
+     
+        // const decoded=req.decoded;
+        // console.log('inside reviews api',decoded)
+     
+        // if(decoded.email!==req.query.email){
+        //   res.status(403).send({message:'unauthorized access 3'})
+        // }
+
+      let query = {};
+      // if (req.query.email) {
+      //   query = {
+      //     email: req.query.email,
+      //   };
+      // }
+
       if (req.query.serviceId) {
         query = {
           serviceId: req.query.serviceId,
